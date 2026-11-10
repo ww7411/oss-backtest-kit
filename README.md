@@ -1,5 +1,22 @@
 # oss-backtest-kit
 
+**Is your backtest real, or did you just try enough ideas until one looked good?** A small, honest toolkit for crypto futures research: verified public data, a no-look-ahead backtest engine, and the statistics that tell you how much of your Sharpe ratio is luck.
+
+## Highlights
+
+- **Overfitting checks built in.** Deflated Sharpe Ratio, Probabilistic Sharpe Ratio and Probability of Backtest Overfitting (CSCV) adjust your result for how many variants you tried, so a lucky curve is easier to spot before it costs money.
+- **Data you can trust.** Every Binance public archive file is checked against its published SHA-256 before it is saved; a manifest records what you have; gaps and duplicate bars are reported, not silently filled.
+- **No look-ahead by design.** Your strategy is called at a bar's close and sees only bars up to that point; orders fill at the next bar's open with slippage and fees.
+- **Costs that bite.** Perpetual-futures funding is included, and a `stressed` cost level lets you check whether an edge survives worse fills.
+- **Small and readable.** Pure Python with only numpy and scipy; 56 offline tests; no account, API key or paid data needed.
+- **MIT licensed** code (the market data has its own terms; see below).
+
+## Who it is for
+
+Individual researchers and students who write their own strategies in Python and want a quick, sober second opinion on a backtest. It is not a trading bot, does not place orders and does not connect to any exchange account.
+
+## What is inside
+
 A small research toolkit for crypto strategies, in three parts:
 
 1. **Multiple-testing statistics** (`oss_backtest_kit.stats`): Sharpe, Probabilistic Sharpe Ratio (PSR), Deflated Sharpe Ratio (DSR), Probability of Backtest Overfitting (CSCV), effective number of trials, circular block bootstrap, Wilson intervals.
@@ -14,13 +31,19 @@ This project is for **research and education only**. It is **not investment advi
 
 Archived-style: published as is, with no maintenance guarantee.
 
-## Install
+## Requirements and install
+
+- Python 3.9 or newer, with numpy and scipy (installed automatically below).
+- Internet access only if you download data; everything else, tests included, runs offline.
+- Some Python knowledge: you write your strategy as a small Python function.
 
 ```
+git clone https://github.com/ww7411/oss-backtest-kit.git
+cd oss-backtest-kit
 pip install -e .
 ```
 
-Requires Python 3.9+, numpy and scipy. Tests also use pytest (optional; each test file can be run directly with `python3`).
+Tests also use pytest (optional; each test file can be run directly with `python3`).
 
 ## Quick start
 

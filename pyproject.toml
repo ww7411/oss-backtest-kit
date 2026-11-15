@@ -1,17 +1,48 @@
 [build-system]
-requires = ["setuptools>=61"]
+requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "oss_backtest_kit"
+name = "oss-backtest-kit"
 version = "0.1.0"
 description = "A small, generic toolkit for crypto strategy research and backtest statistics."
 requires-python = ">=3.9"
-license = {text = "MIT"}
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+keywords = ["backtest", "crypto", "deflated-sharpe-ratio", "overfitting", "quant", "binance"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Financial and Insurance Industry",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Office/Business :: Financial :: Investment",
+]
 dependencies = ["numpy", "scipy"]
+
+[project.optional-dependencies]
+test = ["pytest"]
+dev = ["pytest", "matplotlib"]
+
+[project.urls]
+Homepage = "https://github.com/ww7411/oss-backtest-kit"
+Source = "https://github.com/ww7411/oss-backtest-kit"
+Issues = "https://github.com/ww7411/oss-backtest-kit/issues"
+Changelog = "https://github.com/ww7411/oss-backtest-kit/blob/main/CHANGELOG.md"
 
 [tool.setuptools.packages.find]
 where = ["src"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+
+[tool.ruff.lint]
+# short throwaway lambdas in tests and one local helper are intentional
+ignore = ["E731"]

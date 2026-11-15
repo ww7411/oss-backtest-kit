@@ -1,6 +1,6 @@
 # Scan report
 
-Scope: every file in this folder (the report itself included). Case-insensitive.
+Scope: the public files (`README.md`, `CHANGELOG.md`, `LICENSE`, `pyproject.toml`, `SCAN_REPORT.md`, `src/`, `tests/`, `examples/`), the report itself included. Case-insensitive. Last rerun: 2026-11-15, for version 0.1.0 (the `src/` code is unchanged since the earlier scan; `README.md`, `CHANGELOG.md` and `pyproject.toml` were added or changed).
 
 ## 1. Forbidden terms, absolute paths, network and sensitive-looking words
 
@@ -18,7 +18,7 @@ Result: none found.
 
 ## 3. Data files
 
-Result: only source code, documentation, the licence and the checksum list. No data files.
+Result: only source code, documentation, packaging metadata, the licence and the checksum list. No data files.
 
 ## 4. Numeric literals in src/ (other than 0, 1, 2)
 

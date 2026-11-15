@@ -1,5 +1,10 @@
 # oss-backtest-kit
 
+[![CI](https://github.com/ww7411/oss-backtest-kit/actions/workflows/ci.yml/badge.svg)](https://github.com/ww7411/oss-backtest-kit/actions/workflows/ci.yml)
+[![PyPI](https://img.shields.io/pypi/v/oss-backtest-kit.svg)](https://pypi.org/project/oss-backtest-kit/)
+[![Python versions](https://img.shields.io/pypi/pyversions/oss-backtest-kit.svg)](https://pypi.org/project/oss-backtest-kit/)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 **Is your backtest real, or did you just try enough ideas until one looked good?** A small, honest toolkit for crypto futures research: verified public data, a no-look-ahead backtest engine, and the statistics that tell you how much of your Sharpe ratio is luck.
 
 ## Highlights
@@ -29,7 +34,18 @@ This project is for **research and education only**. It is **not investment advi
 
 ## Status
 
-Archived-style: published as is, with no maintenance guarantee.
+Early release (version 0.1.0). The project is maintained: bug reports and pull requests are welcome. The API may still change before 1.0; see `CHANGELOG.md`.
+
+## Try it in 30 seconds
+
+No data download and no account needed:
+
+```
+pip install oss-backtest-kit
+python -c "import numpy as np; from oss_backtest_kit import stats; r = np.random.default_rng(0).normal(0.0005, 0.01, 500); print('PSR', stats.psr(r)); print('DSR', stats.dsr(r, n_trials=20, trial_sharpes=[0.01, 0.03, 0.02])[0])"
+```
+
+The second number is lower than the first: the Deflated Sharpe Ratio charges you for the 20 variants you tried.
 
 ## Requirements and install
 

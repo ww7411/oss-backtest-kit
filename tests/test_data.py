@@ -63,9 +63,9 @@ class FakeServer:
         self.calls.append(url)
         item = self.routes.get(url)
         if item is None:
-            raise urllib.error.HTTPError(url, 404, "nf", {}, None)
+            raise urllib.error.HTTPError(url, 404, "nf", {}, io.BytesIO(b""))
         if isinstance(item, tuple) and item[0] == "http":
-            raise urllib.error.HTTPError(url, item[1], "x", {}, None)
+            raise urllib.error.HTTPError(url, item[1], "x", {}, io.BytesIO(b""))
         if isinstance(item, tuple) and item[0] == "redirect":
             return FakeResp(b"x", item[1])
         return FakeResp(item, url)

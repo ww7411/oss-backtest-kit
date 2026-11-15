@@ -3,7 +3,7 @@
 [![CI](https://github.com/ww7411/oss-backtest-kit/actions/workflows/ci.yml/badge.svg)](https://github.com/ww7411/oss-backtest-kit/actions/workflows/ci.yml)
 [![PyPI](https://img.shields.io/pypi/v/oss-backtest-kit.svg)](https://pypi.org/project/oss-backtest-kit/)
 [![Python versions](https://img.shields.io/pypi/pyversions/oss-backtest-kit.svg)](https://pypi.org/project/oss-backtest-kit/)
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/ww7411/oss-backtest-kit/blob/main/LICENSE)
 
 **Is your backtest real, or did you just try enough ideas until one looked good?** A small, honest toolkit for crypto futures research: verified public data, a no-look-ahead backtest engine, and the statistics that tell you how much of your Sharpe ratio is luck.
 
@@ -34,7 +34,7 @@ This project is for **research and education only**. It is **not investment advi
 
 ## Status
 
-Early release (version 0.1.0). The project is maintained: bug reports and pull requests are welcome. The API may still change before 1.0; see `CHANGELOG.md`.
+Early release (version 0.1.0). The project is maintained: bug reports and pull requests are welcome. The API may still change before 1.0; see [CHANGELOG.md](https://github.com/ww7411/oss-backtest-kit/blob/main/CHANGELOG.md).
 
 ## Try it in 30 seconds
 
@@ -152,4 +152,4 @@ You alone are responsible for complying with the terms of each source and with t
 
 ## License
 
-MIT; see `LICENSE`. The licence covers this code only, not any market data you download with it (see the data terms above).
+MIT; see [LICENSE](https://github.com/ww7411/oss-backtest-kit/blob/main/LICENSE). The licence covers this code only, not any market data you download with it (see the data terms above).

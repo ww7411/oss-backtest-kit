@@ -1,6 +1,6 @@
 # Scan report
 
-Scope: the public files (`README.md`, `CHANGELOG.md`, `LICENSE`, `pyproject.toml`, `SCAN_REPORT.md`, `src/`, `tests/`, `examples/`), the report itself included. Case-insensitive. Last rerun: 2026-11-15, for version 0.1.0 (the `src/` code is unchanged since the earlier scan; `README.md`, `CHANGELOG.md` and `pyproject.toml` were added or changed).
+Scope: the public files (`README.md`, `CHANGELOG.md`, `LICENSE`, `pyproject.toml`, `MANIFEST.in`, `SCAN_REPORT.md`, `.github/`, `src/`, `tests/`, `examples/`), the report itself included. Case-insensitive. Last rerun: 2026-11-15 (second pass), for version 0.1.0 (the `src/` code is unchanged since the earlier scan; `README.md`, `CHANGELOG.md`, `pyproject.toml`, `MANIFEST.in`, `.github/workflows/` and one test fixture were added or changed).
 
 ## 1. Forbidden terms, absolute paths, network and sensitive-looking words
 
@@ -8,7 +8,7 @@ Method: a case-insensitive recursive grep with one pattern per category below. T
 
 Covers: internal project names and markers, local absolute path prefixes, messaging and cloud-provider names, words for keys, passphrases and similar, email addresses and IPv4 addresses.
 
-Result: no matches.
+Result: no matches in the earlier categories. The second pass also searched for the at-sign and for "token": the only hits are action references (`name@v4`) and the `id-token: write` permission of the Trusted Publishing step in `.github/workflows/`, decorators in `src/`, and URL user-info test inputs; no credential is present anywhere.
 
 ## 2. Non-English characters
 
@@ -19,6 +19,12 @@ Result: none found.
 ## 3. Data files
 
 Result: only source code, documentation, packaging metadata, the licence and the checksum list. No data files.
+
+## 3b. Commit authorship
+
+Check: every commit to be pushed has the project identity (`oss-backtest-kit`, with the GitHub no-reply address of that name) as both author and committer, verified with `git log --format='%an %ae | %cn %ce'`. No personal name or address may appear. The check is run on the public repository before any push.
+
+Result (2026-11-15): all commits in the public repository, including the ones prepared for the next push, have that author and committer.
 
 ## 4. Numeric literals in src/ (other than 0, 1, 2)
 

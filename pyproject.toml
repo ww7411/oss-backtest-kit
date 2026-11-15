@@ -29,6 +29,7 @@ dependencies = ["numpy>=1.21.6", "scipy>=1.7.3"]
 
 [project.optional-dependencies]
 test = ["pytest"]
+examples = ["matplotlib"]
 dev = ["pytest", "matplotlib"]
 
 [project.urls]

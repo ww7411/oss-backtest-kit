@@ -1,2 +1,4 @@
 include CHANGELOG.md
 include LICENSE
+recursive-include examples *.py *.png *.ipynb
+include docs/social_preview.png

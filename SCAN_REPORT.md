@@ -1,6 +1,6 @@
 # Scan report
 
-Scope: the public files (`README.md`, `CHANGELOG.md`, `LICENSE`, `pyproject.toml`, `MANIFEST.in`, `SCAN_REPORT.md`, `.github/`, `src/`, `tests/`, `examples/`), the report itself included. Case-insensitive. Last rerun: 2026-11-15 (second pass), for version 0.1.0 (the `src/` code is unchanged since the earlier scan; `README.md`, `CHANGELOG.md`, `pyproject.toml`, `MANIFEST.in`, `.github/workflows/` and one test fixture were added or changed).
+Scope: the public files (`README.md`, `CHANGELOG.md`, `LICENSE`, `pyproject.toml`, `MANIFEST.in`, `SCAN_REPORT.md`, `.github/`, `src/`, `tests/`, `examples/` (scripts, notebook, picture), `docs/social_preview.png`), the report itself included. Case-insensitive. Last rerun: 2026-11-15 (third pass), for version 0.1.0 (the `src/` code is unchanged since the earlier scan; since the second pass the release workflow, `ci.yml`, `README.md`, `CHANGELOG.md`, `pyproject.toml`, `MANIFEST.in`, `examples/` and `docs/` were added or changed, plus `tests/test_examples.py`).
 
 ## 1. Forbidden terms, absolute paths, network and sensitive-looking words
 
@@ -8,7 +8,7 @@ Method: a case-insensitive recursive grep with one pattern per category below. T
 
 Covers: internal project names and markers, local absolute path prefixes, messaging and cloud-provider names, words for keys, passphrases and similar, email addresses and IPv4 addresses.
 
-Result: no matches in the earlier categories. The second pass also searched for the at-sign and for "token": the only hits are action references (`name@v4`) and the `id-token: write` permission of the Trusted Publishing step in `.github/workflows/`, decorators in `src/`, and URL user-info test inputs; no credential is present anywhere.
+Result: no matches in the earlier categories. The second pass also searched for the at-sign and for "token": the only hits are action references (`name@v4`) and the `id-token: write` permission of the Trusted Publishing step in `.github/workflows/`, decorators in `src/`, and URL user-info test inputs; no credential is present anywhere. The third pass (text files only; the two PNG pictures are checked in section 3) found no further matches; the only word-level hits are false positives (the word "downloads" in prose, "keys" / "passphrases" in this report, the PNG chunk name `IHDR` in a test).
 
 ## 2. Non-English characters
 
@@ -18,7 +18,9 @@ Result: none found.
 
 ## 3. Data files
 
-Result: only source code, documentation, packaging metadata, the licence and the checksum list. No data files.
+Result: only source code, documentation, packaging metadata, the licence, the checksum list, one example notebook and two generated PNG pictures. No data files.
+
+Pictures (`examples/equity_psr_dsr.png`, `docs/social_preview.png`): both are drawn from a seeded synthetic series. The PNG chunk list was read byte by byte: only the header, the pixel-size chunk, the image data and the end chunk are present, so there is no text, EXIF or software chunk, and the files contain no home-directory path or user name. The picture text contains no non-English characters. The notebook has no stored outputs and no local path.
 
 ## 3b. Commit authorship
 

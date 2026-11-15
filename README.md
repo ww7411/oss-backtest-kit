@@ -4,8 +4,13 @@
 [![PyPI](https://img.shields.io/pypi/v/oss-backtest-kit.svg)](https://pypi.org/project/oss-backtest-kit/)
 [![Python versions](https://img.shields.io/pypi/pyversions/oss-backtest-kit.svg)](https://pypi.org/project/oss-backtest-kit/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/ww7411/oss-backtest-kit/blob/main/LICENSE)
+[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ww7411/oss-backtest-kit/blob/main/examples/quickstart.ipynb)
 
 **Is your backtest real, or did you just try enough ideas until one looked good?** A small, honest toolkit for crypto futures research: verified public data, a no-look-ahead backtest engine, and the statistics that tell you how much of your Sharpe ratio is luck.
+
+![Equity curve of the best of 9 variants with PSR and DSR computed by the library; synthetic data, not a trading result](https://raw.githubusercontent.com/ww7411/oss-backtest-kit/main/examples/equity_psr_dsr.png)
+
+*Synthetic data, not a trading result. The best of 9 moving-average variants looks slightly better than a coin flip (PSR 0.53); after charging for the 9 tries the DSR is 0.07. Reproduce it with `examples/equity_psr_dsr.py`.*
 
 ## Highlights
 
@@ -13,7 +18,7 @@
 - **Data you can trust.** Every Binance public archive file is checked against its published SHA-256 before it is saved; a manifest records what you have; gaps and duplicate bars are reported, not silently filled.
 - **No look-ahead by design.** Your strategy is called at a bar's close and sees only bars up to that point; orders fill at the next bar's open with slippage and fees.
 - **Costs that bite.** Perpetual-futures funding is included, and a `stressed` cost level lets you check whether an edge survives worse fills.
-- **Small and readable.** Pure Python with only numpy and scipy; 56 offline tests; no account, API key or paid data needed.
+- **Small and readable.** Pure Python with only numpy and scipy; 62 offline tests; no account, API key or paid data needed.
 - **MIT licensed** code (the market data has its own terms; see below).
 
 ## Who it is for
@@ -79,6 +84,15 @@ Run the moving-average crossover example (synthetic data, nothing downloaded):
 ```
 python3 examples/ma_crossover.py
 ```
+
+Draw the effect chart above (needs matplotlib, an optional extra that is not a runtime dependency):
+
+```
+pip install -e ".[examples]"
+python3 examples/equity_psr_dsr.py
+```
+
+Or open the [quick start notebook in Colab](https://colab.research.google.com/github/ww7411/oss-backtest-kit/blob/main/examples/quickstart.ipynb) (synthetic data, no download).
 
 Use the statistics:
 

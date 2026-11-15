@@ -1,6 +1,6 @@
 # Scan report
 
-Scope: the public files (`README.md`, `CHANGELOG.md`, `LICENSE`, `pyproject.toml`, `MANIFEST.in`, `SCAN_REPORT.md`, `.github/`, `src/`, `tests/`, `examples/` (scripts, notebook, picture), `docs/social_preview.png`), the report itself included. Case-insensitive. Last rerun: 2026-11-15 (third pass), for version 0.1.0 (the `src/` code is unchanged since the earlier scan; since the second pass the release workflow, `ci.yml`, `README.md`, `CHANGELOG.md`, `pyproject.toml`, `MANIFEST.in`, `examples/` and `docs/` were added or changed, plus `tests/test_examples.py`).
+Scope: the public files (`README.md`, `CHANGELOG.md`, `LICENSE`, `pyproject.toml`, `MANIFEST.in`, `SCAN_REPORT.md`, `.github/`, `src/`, `tests/`, `examples/` (scripts, notebook, picture), `docs/social_preview.png`), the report itself included. Case-insensitive. Last rerun: 2026-11-15 (fourth pass), for version 0.1.0. The `src/` code is unchanged since the earlier scans; since the third pass only the `test` extra in `pyproject.toml`, `release.yml`, `README.md`, the notebook install comment and `CHANGELOG.md` changed.
 
 ## 1. Forbidden terms, absolute paths, network and sensitive-looking words
 

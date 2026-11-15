@@ -10,7 +10,7 @@
 
 ![Equity curve of the best of 9 variants with PSR and DSR computed by the library; synthetic data, not a trading result](https://raw.githubusercontent.com/ww7411/oss-backtest-kit/main/examples/equity_psr_dsr.png)
 
-*Synthetic data, not a trading result. The best of 9 moving-average variants looks slightly better than a coin flip (PSR 0.53); after charging for the 9 tries the DSR is 0.07. Reproduce it with `examples/equity_psr_dsr.py`.*
+*Synthetic data, not a trading result. The best of 9 moving-average variants has a slightly positive Sharpe ratio (PSR 0.53), even though the equity curve ends a little below its start (0.97); after charging for the 9 tries the DSR is 0.07, so there is no evidence of skill. Reproduce it with `examples/equity_psr_dsr.py`.*
 
 ## Highlights
 

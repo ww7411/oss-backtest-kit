@@ -28,9 +28,9 @@ classifiers = [
 dependencies = ["numpy>=1.21.6", "scipy>=1.7.3"]
 
 [project.optional-dependencies]
-test = ["pytest"]
+test = ["pytest", "matplotlib", "nbformat"]
 examples = ["matplotlib"]
-dev = ["pytest", "matplotlib"]
+dev = ["pytest", "matplotlib", "nbformat"]
 
 [project.urls]
 Homepage = "https://github.com/ww7411/oss-backtest-kit"

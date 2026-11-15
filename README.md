@@ -64,7 +64,7 @@ cd oss-backtest-kit
 pip install -e .
 ```
 
-Tests also use pytest (optional; each test file can be run directly with `python3`).
+Tests use pytest (install the test extra first: `pip install -e ".[test]"`). The stats, engine and data test files can also be run directly with `python3`.
 
 ## Quick start
 
@@ -137,6 +137,7 @@ The data client allows a single host per task, uses https only, ignores environm
 ## Tests
 
 ```
+pip install -e ".[test]"
 python3 -m pytest
 ```
 

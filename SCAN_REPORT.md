@@ -1,6 +1,6 @@
 # Scan report
 
-Scope: the public files (`README.md`, `CHANGELOG.md`, `LICENSE`, `pyproject.toml`, `MANIFEST.in`, `SCAN_REPORT.md`, `.github/`, `src/`, `tests/`, `examples/` (scripts, notebook, picture), `docs/social_preview.png`), the report itself included. Case-insensitive. Last rerun: 2026-11-15 (fifth pass), for version 0.1.0. The `src/` code is unchanged since the earlier scans; since the fourth pass only `ci.yml` and `release.yml` (the test job now fails if any test is skipped), the effect-chart caption in `README.md` and `CHANGELOG.md` changed.
+Scope: the public files (`README.md`, `CHANGELOG.md`, `LICENSE`, `pyproject.toml`, `MANIFEST.in`, `SCAN_REPORT.md`, `.github/`, `src/`, `tests/`, `examples/` (scripts, notebook, picture), `docs/social_preview.png`), the report itself included. Case-insensitive. Last rerun: 2026-11-15 (sixth pass), for version 0.1.0. The `src/` code is unchanged since the earlier scans; since the fourth pass only `ci.yml` and `release.yml` (the test job now fails if any test is skipped), the effect-chart caption in `README.md` and `CHANGELOG.md` changed. In the sixth pass only the Tests wording in `README.md` and one comment line in `examples/quickstart.ipynb` changed.
 
 ## 1. Forbidden terms, absolute paths, network and sensitive-looking words
 

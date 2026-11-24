@@ -1,0 +1,57 @@
+{
+ "strategy": {
+  "SampleStrategy": {
+   "trades": [
+    {
+     "pair": "BTC/USDT",
+     "open_date": "2024-01-01 02:00:00+00:00",
+     "close_date": "2024-01-01 10:00:00+00:00",
+     "stake_amount": 100.0,
+     "profit_ratio": 0.01,
+     "profit_abs": 1.0,
+     "exit_reason": "roi"
+    },
+    {
+     "pair": "BTC/USDT",
+     "open_date": "2024-01-02 08:00:00+00:00",
+     "close_date": "2024-01-03 09:30:00+00:00",
+     "stake_amount": 100.0,
+     "profit_ratio": -0.02,
+     "profit_abs": -2.0,
+     "exit_reason": "roi"
+    },
+    {
+     "pair": "BTC/USDT",
+     "open_date": "2024-01-03 12:00:00+00:00",
+     "close_date": "2024-01-03 20:00:00+00:00",
+     "stake_amount": 100.0,
+     "profit_ratio": 0.03,
+     "profit_abs": 3.0,
+     "exit_reason": "roi"
+    },
+    {
+     "pair": "BTC/USDT",
+     "open_date": "2024-01-05 01:00:00+00:00",
+     "close_date": "2024-01-06 01:00:00+00:00",
+     "stake_amount": 100.0,
+     "profit_ratio": 0.015,
+     "profit_abs": 1.5,
+     "exit_reason": "roi"
+    }
+   ],
+   "starting_balance": 1000.0,
+   "final_balance": 1003.5,
+   "dry_run_wallet": 1000.0,
+   "backtest_start": "2024-01-01 00:00:00",
+   "backtest_end": "2024-01-07 00:00:00",
+   "timeframe": "1h",
+   "stake_currency": "USDT"
+  }
+ },
+ "strategy_comparison": [
+  {
+   "key": "SampleStrategy",
+   "trades": 4
+  }
+ ]
+}

@@ -10,6 +10,7 @@ Use of the data is subject to the exchange's public data terms; this module
 only fetches what the caller asks for.
 """
 
+import contextlib
 import csv
 import datetime as dt
 import hashlib
@@ -17,6 +18,7 @@ import io
 import os
 import re
 import shutil
+import stat
 import tempfile
 import time
 import zipfile
@@ -174,35 +176,101 @@ def _parse_checksum(blob):
     return None
 
 
+def _row_complete(row):
+    """A manifest row counts as a finished download only if every column is present
+    and the url, digest and local path are filled (a 0.1.0 interruption can leave less)."""
+    if None in row or any(row.get(c) is None for c in MANIFEST_COLS):
+        return False
+    return bool(row["sha256"] and row["local_path"] and row["url"])
+
+
+def _finished_rows(text, base):
+    """Rows of a manifest text that are finished downloads. A last line without a line
+    break and with a real digest must also name an existing file under ``base``
+    (an interrupted write can cut the path column and still leave a text)."""
+    rows = list(csv.DictReader(io.StringIO(text, newline="")))
+    last = rows[-1] if rows and _row_complete(rows[-1]) else None
+    if (last and not text.endswith("\n") and re.fullmatch(r"[0-9a-f]{64}", last["sha256"])
+            and not (Path(base) / last["local_path"]).is_file()):
+        rows.pop()
+    return [r for r in rows if _row_complete(r)]
+
+
 def _done_urls(manifest):
     if not manifest.exists():
         return set()
     with open(manifest, newline="") as fh:
-        return {r["url"] for r in csv.DictReader(fh)}
+        return {r["url"] for r in _finished_rows(fh.read(), manifest.parent)}
+
+
+def _drop_unfinished(old, url, base):
+    """Return ``old`` manifest bytes without unfinished rows and without any row for ``url``
+    (so a re-download replaces a torn row); unchanged when there is nothing to drop."""
+    text = old.decode("utf-8", "replace")
+    keep = [r for r in _finished_rows(text, base) if r["url"] != url]
+    if len(keep) == len(list(csv.DictReader(io.StringIO(text, newline="")))):
+        return old
+    buf = io.StringIO()
+    w = csv.DictWriter(buf, MANIFEST_COLS)
+    w.writeheader()
+    w.writerows(keep)
+    return buf.getvalue().encode("utf-8")
+
+
+@contextlib.contextmanager
+def _manifest_lock(manifest):
+    """Hold an exclusive lock while the manifest is rewritten, so two download
+    processes on one folder cannot lose each other's rows. Uses ``fcntl`` where
+    it exists (Linux, macOS); on other systems there is no lock and the folder
+    must have one download process at a time."""
+    try:
+        import fcntl
+    except ImportError:
+        yield
+        return
+    fd = os.open(str(manifest.parent / (".%s.lock" % manifest.name)), os.O_RDWR | os.O_CREAT, 0o600)
+    try:
+        fcntl.flock(fd, fcntl.LOCK_EX)
+        yield
+    finally:
+        os.close(fd)  # closing the descriptor releases the lock
 
 
 def _record(manifest, row, min_free):
-    """Add one complete row: a new manifest is published atomically with its
-    header; an existing one gets the row in a single append write."""
-    _need_space(manifest.parent, 4096, min_free)
+    """Add one complete row. Under a lock, the whole new manifest (old content
+    plus the row) goes to a temporary file in the same directory, is synced, and
+    then replaces the old file with ``os.replace``; a failure midway (including
+    Ctrl-C) leaves the old manifest exactly as it was and removes the temporary
+    file. The old file's permission bits are kept."""
     buf = io.StringIO()
     csv.DictWriter(buf, MANIFEST_COLS).writerow(row)
     line = buf.getvalue().encode("utf-8")
-    if not manifest.exists():
-        head = io.StringIO()
-        csv.DictWriter(head, MANIFEST_COLS).writeheader()
+    with _manifest_lock(manifest):
+        mode = None
+        if manifest.exists():
+            old = manifest.read_bytes()
+            mode = stat.S_IMODE(manifest.stat().st_mode)
+            old = _drop_unfinished(old, row["url"], manifest.parent)
+            if old and not old.endswith(b"\n"):
+                old += b"\r\n"
+        else:
+            head = io.StringIO()
+            csv.DictWriter(head, MANIFEST_COLS).writeheader()
+            old = head.getvalue().encode("utf-8")
+        _need_space(manifest.parent, len(old) + len(line) + 4096, min_free)
+        fd, tmp = tempfile.mkstemp(prefix=".%s." % manifest.name, suffix=".part", dir=str(manifest.parent))
         try:
-            atomic_create(manifest, head.getvalue().encode("utf-8") + line, min_free)
-            return
-        except FileExistsError:
-            pass
-    fd = os.open(str(manifest), os.O_WRONLY | os.O_APPEND)
-    try:
-        if os.write(fd, line) != len(line):
-            raise DataError("short write to %s" % manifest)
-        os.fsync(fd)
-    finally:
-        os.close(fd)
+            with os.fdopen(fd, "wb") as fh:
+                fh.write(old + line)
+                fh.flush()
+                os.fsync(fh.fileno())
+            if mode is not None:
+                os.chmod(tmp, mode)
+            os.replace(tmp, str(manifest))
+        except BaseException:
+            if os.path.exists(tmp):
+                os.unlink(tmp)
+            raise
 
 
 def fetch_one(client, out_dir, kind, symbol, freq, period, interval=None,

@@ -1,4 +1,7 @@
 include CHANGELOG.md
 include LICENSE
 recursive-include examples *.py *.png *.ipynb
+recursive-include tests *.py *.csv *.json *.feather
+include docs/SPEC_B.md
 include docs/social_preview.png
+prune tests/audit_ce

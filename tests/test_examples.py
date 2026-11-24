@@ -17,6 +17,7 @@ sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(ROOT / "examples"))
 
 import equity_psr_dsr  # noqa: E402
+import checkup_demo  # noqa: E402
 import ma_crossover  # noqa: E402
 
 
@@ -93,3 +94,24 @@ def test_notebook_code_cells_run_offline_without_the_install_cell():
             exec(compile(src, "<cell>", "exec"), scope)
     assert "best variant (fast, slow): (10, 30)" in buf.getvalue()
     assert np.isclose(scope["dsr_value"], equity_psr_dsr.compute()["dsr"])
+
+
+def test_b4_1_example_runs_offline(tmp_path, capsys):
+    import socket
+    real = socket.socket.connect
+    def no_net(*a, **k):
+        raise AssertionError("the example must not touch the network")
+    socket.socket.connect = no_net
+    try:
+        assert checkup_demo.main(["--out-dir", str(tmp_path)]) == 0
+        again = checkup_demo.run()
+    finally:
+        socket.socket.connect = real
+    out = capsys.readouterr().out
+    assert out.count("# Overfitting checkup") == 2 and "cannot show that a strategy will make money" in out
+    assert "Group: overfitted (overall: FAIL)" in out and "Group: robust (overall: PASS)" in out
+    assert sorted(p.name for p in tmp_path.iterdir()) == ["overfitted.html", "overfitted.md", "robust.html", "robust.md"]
+    first = checkup_demo.run()
+    assert again["robust"].to_markdown() == first["robust"].to_markdown()   # fixed seed
+    assert first["overfitted"].metric("dsr").verdict == "fail"
+    assert first["robust"].metric("dsr").verdict == "pass" and first["robust"].metric("pbo").verdict == "pass"

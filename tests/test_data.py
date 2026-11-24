@@ -408,6 +408,100 @@ def test_rest_pagination_must_advance_and_is_bounded():
         raise AssertionError("page cap not enforced")
 
 
+def _row(n):
+    return {c: "v%d_%s" % (n, c) for c in archive.MANIFEST_COLS}
+
+
+def _raises(exc, fn):
+    try:
+        fn()
+    except exc:
+        return
+    raise AssertionError("expected %s" % exc.__name__)
+
+
+def _boom(exc):
+    def f(*a, **k):
+        raise exc("injected")
+    return f
+
+
+def test_b5_1_manifest_atomic_replace():
+    with tmp() as d:
+        m = Path(d) / "MANIFEST.csv"
+        archive._record(m, _row(1), 0)
+        archive._record(m, _row(2), 0)
+        assert [r["url"] for r in csv.DictReader(open(m, newline=""))] == ["v1_url", "v2_url"]
+        before = m.read_bytes()
+        names = sorted(p.name for p in Path(d).iterdir())
+
+        def untouched():
+            assert m.read_bytes() == before
+            assert sorted(p.name for p in Path(d).iterdir()) == names
+
+        real_fsync, real_replace = os.fsync, os.replace
+        try:
+            # failures at sync or swap, and Ctrl-C, leave the old file and no temp file
+            for exc in (OSError, KeyboardInterrupt):
+                os.fsync = _boom(exc)
+                _raises(exc, lambda: archive._record(m, _row(3), 0))
+                untouched()
+            os.fsync = real_fsync
+            os.replace = _boom(OSError)
+            _raises(OSError, lambda: archive._record(m, _row(3), 0))
+            untouched()
+            os.replace = real_replace
+
+            # the temp file is in the same folder, is fully written and synced before the swap
+            seen = {}
+
+            def spy_fsync(fd):
+                seen["synced"] = os.fstat(fd).st_size
+                return real_fsync(fd)
+
+            def spy_replace(a, b):
+                seen["replace"] = (a, b, os.path.getsize(a))
+                return real_replace(a, b)
+
+            os.fsync, os.replace = spy_fsync, spy_replace
+            m.write_bytes(before.rstrip(b"\r\n"))          # old file without a final newline
+            archive._record(m, _row(3), 0)
+        finally:
+            os.fsync, os.replace = real_fsync, real_replace
+        tmp_name, target, size = seen["replace"]
+        assert Path(tmp_name).parent == m.parent and target == str(m)
+        assert seen["synced"] == size == m.stat().st_size      # data was complete when synced
+        assert [r["url"] for r in csv.DictReader(open(m, newline=""))] == ["v1_url", "v2_url", "v3_url"]
+
+
+def test_b5_1_manifest_keeps_permissions():
+    with tmp() as d:
+        m = Path(d) / "MANIFEST.csv"
+        archive._record(m, _row(1), 0)
+        os.chmod(m, 0o644)
+        archive._record(m, _row(2), 0)
+        assert (m.stat().st_mode & 0o777) == 0o644
+
+
+_WRITER = (
+    "import sys; sys.path.insert(0, sys.argv[1]); from pathlib import Path\n"
+    "from oss_backtest_kit.data import archive\n"
+    "d, tag, n = Path(sys.argv[2]), sys.argv[3], int(sys.argv[4])\n"
+    "for i in range(n):\n"
+    "    archive._record(d / 'MANIFEST.csv', {c: '%s_%d_%s' % (tag, i, c) for c in archive.MANIFEST_COLS}, 0)\n"
+)
+
+
+def test_b5_1_manifest_concurrent_writers_lose_no_rows():
+    import subprocess
+    src = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "src")
+    with tmp() as d:
+        procs = [subprocess.Popen([sys.executable, "-c", _WRITER, src, d, tag, "200"]) for tag in ("a", "b")]
+        assert [p.wait(timeout=300) for p in procs] == [0, 0]
+        rows = list(csv.DictReader(open(Path(d) / "MANIFEST.csv", newline="")))
+        assert len(rows) == 400 and len({r["url"] for r in rows}) == 400
+
+
 if __name__ == "__main__":
     tests = [(k, v) for k, v in sorted(globals().items()) if k.startswith("test_") and callable(v)]
     failed = 0
@@ -420,3 +514,35 @@ if __name__ == "__main__":
             print("FAIL", name, repr(exc))
     print("%d passed, %d failed" % (len(tests) - failed, failed))
     sys.exit(1 if failed else 0)
+
+
+
+def test_b5_3_unfinished_manifest_rows_are_not_done_and_are_replaced():
+    with tmp() as d:
+        m = Path(d) / "MANIFEST.csv"
+        good = _row(1)
+        good["sha256"] = "a" * 64
+        archive._record(m, good, 0)
+        with open(m, "ab") as fh:
+            fh.write(b"klines,X,1d,monthly,2024-01,torn_url,")
+        assert archive._done_urls(m) == {"v1_url"}
+        fixed = _row(2)
+        fixed["url"] = "torn_url"
+        archive._record(m, fixed, 0)
+        rows = list(csv.DictReader(open(m, newline="")))
+        assert [r["url"] for r in rows] == ["v1_url", "torn_url"] and rows[1]["local_path"] == "v2_local_path"
+
+
+def test_b5_3_row_cut_inside_local_path_is_downloaded_again():
+    with tmp() as d:
+        m = Path(d) / "MANIFEST.csv"
+        good = _row(1)
+        good["sha256"] = "a" * 64
+        archive._record(m, good, 0)
+        cut = ",".join(good[c] for c in archive.MANIFEST_COLS[:-1]) + ",data/s"
+        cut = cut.replace("v1_url", "cut_url")
+        with open(m, "ab") as fh:
+            fh.write(cut.encode())
+        assert archive._done_urls(m) == {"v1_url"}
+        archive._record(m, _row(3), 0)
+        assert [r["url"] for r in csv.DictReader(open(m, newline=""))] == ["v1_url", "v3_url"]

@@ -368,3 +368,14 @@ if __name__ == "__main__":
             print("FAIL", name, repr(exc))
     print("%d passed, %d failed" % (len(tests) - failed, failed))
     sys.exit(1 if failed else 0)
+
+
+def test_b5_3_loader_refuses_an_unfinished_manifest_row():
+    with tempfile.TemporaryDirectory() as d:
+        (Path(d) / "MANIFEST.csv").write_bytes(b"kind,symbol,interval,local_path\r\nklines,AAA,1d")
+        try:
+            load_market_data(Path(d), ["AAA"], "1d")
+        except EngineError as e:
+            assert "unfinished" in str(e)
+        else:
+            raise AssertionError("unfinished row was accepted")

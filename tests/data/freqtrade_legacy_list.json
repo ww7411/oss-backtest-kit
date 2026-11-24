@@ -1,0 +1,11 @@
+[
+ {
+  "pair": "BTC/USDT",
+  "open_date": "2024-01-01 00:00:00+00:00",
+  "close_date": "2024-01-02 00:00:00+00:00",
+  "stake_amount": 100.0,
+  "profit_ratio": 0.01,
+  "profit_abs": 1.0,
+  "exit_reason": "roi"
+ }
+]

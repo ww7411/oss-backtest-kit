@@ -311,7 +311,10 @@ def _manifest(directory):
     if not path.exists():
         raise EngineError("no MANIFEST.csv in %s" % directory)
     with open(path, newline="") as fh:
-        return list(csv.DictReader(fh))
+        rows = list(csv.DictReader(fh))
+    if any(None in r or not r.get("local_path") for r in rows):
+        raise EngineError("MANIFEST.csv in %s has an unfinished row; run the download again to repair it" % directory)
+    return rows
 
 
 def _zip_records(directory, rel):

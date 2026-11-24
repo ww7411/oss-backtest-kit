@@ -201,7 +201,7 @@ All tests run offline with synthetic data and fake network responses.
 
 ## Data terms
 
-This kit ships **code only and never any market data** (no candles, no ticks). One exception to note: `tests/data/real_freqtrade_2026_10/` holds the result files of one small freqtrade backtest used as a test (trade records of a demonstration strategy, computed from public exchange candles, plus a market-change and a wallet series derived from them; not the raw candles). Delete that folder if you redistribute the package and are unsure about it. It downloads from two different sources, which have **different terms**. Nothing here is legal advice; read the current terms yourself before downloading, using or sharing any data.
+This kit ships **code only and never any market data** (no candles, no ticks). One exception to note: `tests/data/real_freqtrade_2026_10/` and `tests/data/real_freqtrade_2026_10_futures/` hold the result files of two small freqtrade backtests (one spot, one futures) used as tests (trade records of a demonstration strategy, computed from public exchange candles, plus a market-change and a wallet series derived from them; not the raw candles). Delete those folders if you redistribute the package and are unsure about them. It downloads from two different sources, which have **different terms**. Nothing here is legal advice; read the current terms yourself before downloading, using or sharing any data.
 
 **1. Archive files from `data.binance.vision`** (`archive` subcommand). These are described in the `binance/binance-public-data` repository (https://github.com/binance/binance-public-data), whose `TERMS_AND_CONDITIONS.md` states a CC BY-NC-SA 4.0 licence (https://creativecommons.org/licenses/by-nc-sa/4.0/). As we read that licence, it means:
 
